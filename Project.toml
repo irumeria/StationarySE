@@ -3,6 +3,18 @@ uuid = "95985ec5-3952-4812-a923-819873c75fda"
 authors = ["iru"]
 version = "1.0.0-DEV"
 
+[deps]
+Cubature = "667455a9-e2ce-5579-9412-b964f529a492"
+GSL = "92c85e6c-cbff-5e0c-80f7-495c94daaecd"
+GeneralizedGenerated = "6b9d7cbe-bcb9-11e9-073f-15a7a543e2eb"
+Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
+KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+
 [compat]
 julia = "1"
 
