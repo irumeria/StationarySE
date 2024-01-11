@@ -51,7 +51,7 @@ function simpson2(f, be, ed, m, n; params = [])
 	return integral_sum
 end
 
-function monte_carlo_integral(f, be, ed, n; params = [], save_memory = false, in_sphere = false)
+function monte_carlo_integral(f, be, ed, n; params = [], save_memory = false, volumn = nothing)
 	"""
 	get dimension from be
 	"""
@@ -68,13 +68,6 @@ function monte_carlo_integral(f, be, ed, n; params = [], save_memory = false, in
 		else
 			sp = sample_points[:, i]
 		end
-
-		if in_sphere
-			if norm(sp) > ed[1] - be[1]
-				final_n -= 1
-				continue
-			end
-		end
 		
 		fi = f([0.0], sp, params)[1]
 		
@@ -85,7 +78,9 @@ function monte_carlo_integral(f, be, ed, n; params = [], save_memory = false, in
 		
 		integral_sum += fi
 	end
-	volumn = prod(ed - be)
+	if volumn === nothing
+		volumn = prod(ed - be)
+	end
 	(integral_sum / final_n) * volumn
 end
 

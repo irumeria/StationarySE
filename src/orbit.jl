@@ -72,7 +72,6 @@ function integral_overlap(
 	Threads.@threads for n ∈ 0:matrix_size-1
 		sol_vec = zeros(matrix_size)
 		for m ∈ 0:matrix_size-1
-
 			prob = IntegralProblem(f, start_bound, end_bound, [n, m]) 
 			sol = solve(prob, CubatureJLh(), reltol=1e-3, abstol=1e-3)
 			sol_vec[m+1] = sol.u[1]

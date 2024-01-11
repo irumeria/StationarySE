@@ -42,7 +42,6 @@ function two_electron_matrix(
 	combined::Bool = false,
 	dimension::Int64 = 1,
 	symmetric::Symbol = nothing,
-	integral_steps::Int64 = 1000000,
 	normalize_vec = nothing)
 	"""
 	matrix of <ψ_p|x><ψ_m|x><x|O|x><x|ψ_q><x|ψ_s>
@@ -50,34 +49,38 @@ function two_electron_matrix(
 	if isnothing(normalize_vec)
 		normalize_vec = ones(matrix_size)
 	elseif any(isa(x, Complex) for x in normalize_vec)
-		normalize_vec = real.(normalize_vec)
-		@warn "normalize factors contains complex number, only the real part is used."
+		normalize_vec = sqrt.(real.(normalize_vec)^2 + imag.(normalize_vec)^2)
+		@warn "normalize factors contains complex number, the norm is used."
 	end
 
 	if combined
 		f = wave_func
 	elseif symmetric == :Spherical
 		f = (s, r, p) -> begin
-			r = reshape(r, (3, 2))
-			r1 = norm(r[:, 1])
-			r2 = norm(r[:, 2])
-			dr = norm(r[:, 1] - r[:, 2])
-			s[1] = wave_func(r1, p[1])' * wave_func(r2, p[2])' * operator(dr) * wave_func(r1, p[3]) * wave_func(r2, p[4])
+			r1 = r[1]
+			r2 = r[2]
+			cos_theta = cos(r[3])
+			norm_r2_minus_r1 = sqrt(r1^2 + r2^2 - 2 * r1 * r2 * cos_theta)
+			s[1] = wave_func(r1, p[1])' * 
+				wave_func(r2, p[2])' * 
+				operator(norm_r2_minus_r1) * 
+				wave_func(r1, p[3]) * 
+				wave_func(r2, p[4]) * 
+				4 * pi * r1^2 *
+				2 * pi * r2^2 * sin(r[3])
 			s
 		end
-		start_bound = repeat(-sqrt.(end_bound), 6) # for test
-		end_bound = repeat(sqrt.(end_bound), 6)
+		start_bound = [start_bound[1], start_bound[1], 0]
+		end_bound = [end_bound[1], end_bound[1], pi]
 	else
-		ErrorException("Not implemented for dimension "+string(dimension))
+		ErrorException("No implement for dimension "+string(dimension))
 	end
-
-	# start_bound .+= rand() * 1e-5
-	# end_bound .+= rand() * 1e-5
 
 	shared_mat = SharedArray{Float64}((matrix_size, matrix_size, matrix_size, matrix_size))
 
 	permutations_array = []
-	mat = zeros((matrix_size, matrix_size))
+	J_mat = zeros((matrix_size, matrix_size))
+	K_mat = zeros((matrix_size, matrix_size))
 	for i ∈ 0:matrix_size-1
 		for j ∈ 0:matrix_size-1
 			for k ∈ 0:matrix_size-1
@@ -93,13 +96,8 @@ function two_electron_matrix(
 
 	Threads.@threads for p in 1:size(permutations_array)[1]
 		i, j, k, l = permutations_array[p, :]
-		sol = monte_carlo_integral(
-			f, 
-			start_bound |> copy, 
-			end_bound |> copy, 
-			integral_steps |> copy; 
-			params = [i, j, k, l], 
-			save_memory = true)
+		prob = IntegralProblem(f, start_bound, end_bound, [i, j, k, l]) 
+		sol = solve(prob, CubatureJLh(), reltol=1e-3, abstol=1e-3).u[1]
 		shared_mat[i+1, j+1, k+1, l+1] = sol
 		next!(prog)
 	end
@@ -108,11 +106,17 @@ function two_electron_matrix(
 
 	for i ∈ 0:matrix_size-1
 		for j ∈ 0:matrix_size-1
-			mat[i+1, j+1] = normalize_vec' * _mat[i+1, :, j+1, :] * normalize_vec
+			J_mat[i+1, j+1] = normalize_vec' * _mat[i+1, :, j+1, :] * normalize_vec
 		end
 	end
 
-	mat
+	for i ∈ 0:matrix_size-1
+		for j ∈ 0:matrix_size-1
+			K_mat[i+1, j+1] = normalize_vec' * _mat[i+1, :, :, j+1] * normalize_vec
+		end
+	end
+
+	J_mat, K_mat
 
 end
 
