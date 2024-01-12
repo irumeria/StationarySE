@@ -5,7 +5,6 @@ version = "1.0.0-DEV"
 
 [deps]
 Cubature = "667455a9-e2ce-5579-9412-b964f529a492"
-GSL = "92c85e6c-cbff-5e0c-80f7-495c94daaecd"
 GeneralizedGenerated = "6b9d7cbe-bcb9-11e9-073f-15a7a543e2eb"
 Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
 KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"

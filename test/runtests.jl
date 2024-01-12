@@ -1,6 +1,5 @@
 using StationarySE
 using Test
-using GSL
 using LinearAlgebra
 
 @testset "StationarySE.jl" begin
