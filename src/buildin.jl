@@ -108,4 +108,28 @@ function hydrogen_basis_another(r, n)
 end
 
 
-export pow_series, gaussian_hydrogen, gaussian_helium, hydrogen_basis_another, harmonic_oscillator, finite_well, hydrogen_atom
+function gaussian_carbon(r, n)
+	x = n
+	alpha = 446.62209999992734 - 598.006694158179*x + 119.8768753734617*x^2 + 238.060660375486*x^3 - 194.99390715856327*x^4 + 66.59740985677443*x^5 - 11.854795762057295*x^6 + 1.0781859016858948*x^7 - 0.0395744285359738*x^8
+	exp(-alpha * r^2) 
+end
+
+function gaussian_oxygen(r, n)
+	x = n
+	alpha = 282.4431 - 605.9857971179763*x + 655.5668146075697*x^2 - 418.2070589896529*x^3 + 161.77781207998268*x^4 - 38.01963633881945*x^5 + 5.277294957534723*x^6 - 0.3961440535515874*x^7 + 0.012354854913194447*x^8
+	exp(-alpha * r^2)
+end
+
+function gaussian_oxygen_2(r, n)
+	x = n
+	alpha = 282.4431 - 389.6065862360715*x + 138.11231157016877*x^2 + 47.118644341180485*x^3 - 48.12873642102427*x^4 + 14.51699053805555*x^5 - 2.1392083744097214*x^6 + 0.1567984068353174*x^7 - 0.004573824734623014*x^8
+	exp(-alpha * r^2)
+end
+
+function gaussian_oxygen_3(r, n)
+	x = n
+	alpha = 83.87572557867881 - 125.30205962611976*x + 66.80832586569271*x^2 - 12.380710077489967*x^3 - 1.6419505209268408*x^4 + 1.1188284091816623*x^5 - 0.19769507767761269*x^6 + 0.015705930349550135*x^7 - 0.00048068987847203255*x^8
+	exp(-alpha * r^2)
+end
+
+export pow_series, gaussian_hydrogen, gaussian_helium, hydrogen_basis_another, harmonic_oscillator, finite_well, hydrogen_atom, gaussian_carbon, gaussian_oxygen, gaussian_oxygen_2, gaussian_oxygen_3

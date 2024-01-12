@@ -154,7 +154,6 @@ function integral_hamiltonian(
 		symmetric = symmetric,
 		dimension = dimension)
 
-	@show p_matrix
 	-p_matrix + v_matrix
 
 end

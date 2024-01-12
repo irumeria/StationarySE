@@ -216,12 +216,12 @@ function helium_ground_state()
 	Q_matrix = two_electron_matrix(
 		wave_func,
 		num_orbitals,
+		ec,
 		start_bound,
 		end_bound;
 		operator = (dr) -> 1.0/dr,
 		dimension = dimension,
-		symmetric = symmetric,
-		normalize_vec = ec
+		symmetric = symmetric
 	)
 
 	@show Q_matrix
@@ -267,12 +267,12 @@ function helium_ground_state()
 		Q_matrix = two_electron_matrix(
 			wave_func,
 			num_orbitals,
+			ec,
 			start_bound,
 			end_bound;
 			operator = (dr) -> 1.0/dr,
 			dimension = dimension,
 			symmetric = symmetric,
-			normalize_vec = ec
 		)
 
 		pesudo_matrix = h_matrix + Q_matrix

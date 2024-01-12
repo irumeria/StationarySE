@@ -3,13 +3,13 @@
 function two_electron_matrix_from_integraled(
 	int_fn::Function,
 	matrix_size,
-	normalize_vec = nothing)
+	coefs = nothing)
 
-	if isnothing(normalize_vec)
-		normalize_vec = ones(matrix_size)
-	elseif any(isa(x, Complex) for x in normalize_vec)
-		normalize_vec = real.(normalize_vec)
-		@warn "normalize_vec contains complex number, only real part is used."
+	if isnothing(coefs)
+		coefs = ones(matrix_size)
+	elseif any(isa(x, Complex) for x in coefs)
+		coefs = sqrt.(real.(coefs)^2 + imag.(coefs)^2)
+		@warn "coefs contains complex number, only real part is used."
 	end
 
 	_mat = zeros((matrix_size, matrix_size, matrix_size, matrix_size))
@@ -26,31 +26,31 @@ function two_electron_matrix_from_integraled(
 	
 	for i ∈ 0:matrix_size-1
 		for j ∈ 0:matrix_size-1
-			mat[i+1, j+1] = normalize_vec' * _mat[i+1, :, j+1, :] * normalize_vec
+			mat[i+1, j+1] = coefs' * _mat[i+1, :, j+1, :] * coefs
 		end
 	end
 	mat
 end
 
-
 function two_electron_matrix(
 	wave_func::Function,
 	matrix_size::Int64,
+	coefs::Matrix,
 	start_bound::Vector, # x_start, y_start, z_start
 	end_bound::Vector; # x_end, y_end, z_end
 	operator::Function = (_) -> 1, # Deafult : I
 	combined::Bool = false,
 	dimension::Int64 = 1,
-	symmetric::Symbol = nothing,
-	normalize_vec = nothing)
+	symmetric::Symbol = nothing)
 	"""
 	matrix of <ψ_p|x><ψ_m|x><x|O|x><x|ψ_q><x|ψ_s>
 	"""
-	if isnothing(normalize_vec)
-		normalize_vec = ones(matrix_size)
-	elseif any(isa(x, Complex) for x in normalize_vec)
-		normalize_vec = sqrt.(real.(normalize_vec)^2 + imag.(normalize_vec)^2)
-		@warn "normalize factors contains complex number, the norm is used."
+	fock_levels_num = size(coefs)[2]
+	for en ∈ 1:fock_levels_num
+		if any(isa(x, Complex) for x in coefs[:,en])
+			coefs[:,en] = sqrt.(real.(coefs[:,en])^2 + imag.(coefs[:,en])^2)
+			@warn "normalize factors contains complex number, the norm is used."
+		end
 	end
 
 	if combined
@@ -104,15 +104,19 @@ function two_electron_matrix(
 	finish!(prog)
 	_mat = copy(shared_mat)
 
-	for i ∈ 0:matrix_size-1
-		for j ∈ 0:matrix_size-1
-			J_mat[i+1, j+1] = normalize_vec' * _mat[i+1, :, j+1, :] * normalize_vec
+	for i ∈ 1:matrix_size
+		for j ∈ 1:matrix_size
+			for k ∈ 1:fock_levels_num
+				J_mat[i, j] += coefs[:, k]' * _mat[i, :, j, :] * coefs[:, k]
+			end
 		end
 	end
 
-	for i ∈ 0:matrix_size-1
-		for j ∈ 0:matrix_size-1
-			K_mat[i+1, j+1] = normalize_vec' * _mat[i+1, :, :, j+1] * normalize_vec
+	for i ∈ 1:matrix_size
+		for j ∈ 1:matrix_size
+			for k ∈ 1:fock_levels_num
+				K_mat[i, j] += coefs[:, k]' * _mat[i, :, :, j] * coefs[:, k]
+			end
 		end
 	end
 
