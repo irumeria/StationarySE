@@ -9,6 +9,26 @@ using LinearAlgebra
 	println("Running on ", Threads.nthreads(), " cores")
 
 	println("")
+	println("=== Testing harmonic_oscillator potential deviding the space in finite elements ===")
+	grid_size = 10
+	potential = harmonic_oscillator(grid_size)
+	x = range(-1, 1, grid_size) |> collect
+	dx = x[2] - x[1]
+	hbar = 1e-3
+	mass = 1e-4
+
+	evals, _ = eigen_solve(
+		grid_size,
+		potential,
+		dx,
+		hbar,
+		mass,
+	)
+
+	println("energies: ", evals)
+
+
+	println("")
 	println("=== Testing H atom ===")
 	potential_func = (r) -> -1/r
 	evals, _ = variation_solve(gaussian_hydrogen, 4, [0.0], [3.0]; potential=potential_func, symmetric=:Spherical, dimension=3)
