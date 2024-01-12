@@ -190,7 +190,6 @@ function hartree_fock_solve(
 		println("ground state energy in epoch ", i, " : ", ground_state_energy)
 
 	end
-
 	
 	ground_state_energy
 	

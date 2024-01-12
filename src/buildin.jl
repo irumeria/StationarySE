@@ -101,7 +101,7 @@ end
 
 function hydrogen_basis_another(r, n)
 	"""
-	this subsapce will not give a good appoximation unless num_orbitals >= 10
+	this subsapce will not give a good appoximation unless num_orbitals ~ 9
 	"""
 	alpha = 13/(n+1)
 	exp(-alpha * r^2) 
