@@ -7,7 +7,7 @@ using LinearAlgebra
 
 	@info "change cores number by setting JULIA_NUM_THREADS environment variable"
 	println("Running on ", Threads.nthreads(), " cores")
-	
+
 	println("")
 	println("=== Testing H atom ===")
 	potential_func = (r) -> -1/r
@@ -19,7 +19,7 @@ using LinearAlgebra
 
 	println("")
 	println("=== Testing He atom ===")
-	ground_state_energy = hartree_fock_solve(2, gaussian_helium, 2; end_bound=[8.0])
+	ground_state_energy = hartree_fock_solve(2, gaussian_helium, 4; end_bound=[8.0])
 	energy_ev = ground_state_energy * 27.211396
 	println("total ground state energy for He atom: ", ground_state_energy, " hatree, or ", energy_ev, " ev")
 
