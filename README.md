@@ -11,12 +11,20 @@ instantiate     # install and precompile the dependencies for this project
 test            # running the build-in test of this project
 ```
 
+## Running on multiple cores
+Use this command in the shell to set the number of processors used in the calculation:
+```sh
+export  JULIA_NUM_THREADS=${THE_NUMBER_OF_THE_CORES}   
+```
+It should be set before activate the Julia REPL environment.
+
+
 ## Solver API
 
 ### Single electron
 #### 1. `eigen_solve(grid_size, potential, cell_length, hbar, mass; sparse)`
 
-Solves the eigenvalue problem for a given Hamiltonian matrix. The space will be devided into sparse grid
+Solves the eigenvalue problem for a given Hamiltonian matrix. The space will be devided into sparse grid.
 
 #### Parameters:
 
