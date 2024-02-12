@@ -11,9 +11,74 @@ instantiate     # install and precompile the dependencies for this project
 test            # running the build-in test of this project
 ```
 
+## Solver API
+
+### Single electron
+#### 1. `eigen_solve(grid_size, potential, cell_length, hbar, mass; sparse)`
+
+Solves the eigenvalue problem for a given Hamiltonian matrix.
+
+#### Parameters:
+
+- `grid_size::Int`: The size of the grid for the problem.
+- `potential::Array`: The potential energy array.
+- `cell_length::AbstractFloat`: The length of each cell in the grid.
+- `hbar::AbstractFloat`: The reduced Planck's constant.
+- `mass::AbstractFloat`: The mass of the particle.
+- `sparse::Bool` (optional, default `true`): A flag indicating whether to use sparse matrix representation. (it will save memory, especially when thge grid_size is large)
+
+#### Returns:
+
+- `evals`: The eigenvalues of the Hamiltonian matrix.
+- `evecs`: The corresponding eigenvectors of the Hamiltonian matrix.
+
+#### 2. `variation_solve(basis_func, num_orbitals, start_bound, end_bound; potential, symmetric, dimension)`
+
+Solves the eigenvalue problem using the variational method.
+
+#### Parameters:
+
+- `basis_func::Function`: The basis function for the problem.
+- `num_orbitals::Int`: The number of orbitals in the system.
+- `start_bound::Vector`: The starting boundary for the problem.
+- `end_bound::Vector`: The ending boundary for the problem.
+- `potential::Function` (optional, default `(_) -> 0`): The potential energy function.
+- `symmetric::Symbol` (optional, default `:Nothing`): A flag indicating whether the problem is symmetric.
+- `dimension::Int` (optional, default `1`): The dimension of the problem.
+
+#### Returns:
+
+- `evals`: The eigenvalues of the Hamiltonian matrix.
+- `evecs`: The corresponding eigenvectors of the Hamiltonian matrix.
+
+### Multiple electrons
+#### 3. `hartree_fock_solve(nuclear_z, basis_func, num_orbitals; symmetric, dimension, iter_steps, torrlence, start_bound, end_bound, potential_func, mode, converge_alpha)`
+
+Solves the Hartree-Fock equations for a given system.
+
+#### Parameters:
+
+- `nuclear_z::Int`: The atomic number of the nucleus.
+- `basis_func::Function`: The basis function for the problem.
+- `num_orbitals::Int`: The number of orbitals in the system.
+- `symmetric::Symbol` (optional, default `:Spherical`): The symmetry of the system.
+- `dimension::Int` (optional, default `3`): The dimension of the problem.
+- `iter_steps::Int` (optional, default `50`): The number of iteration steps.
+- `torrlence::Float64` (optional, default `1e-2`): The tolerance for convergence.
+- `start_bound::Vector` (optional, default `[0.0]`): The starting boundary for the problem.
+- `end_bound::Vector` (optional, default `[4.0]`): The ending boundary for the problem.
+- `potential_func::Function` (optional, default `(r) -> -nuclear_z / r`): The potential energy function.
+- `mode::Symbol` (optional, default `:RHF`): The mode of the calculation (only RHF, that is, restricted Hartree–Fock, is implemented).
+- `converge_alpha::Float64` (optional, default `0.6`): The convergence factor asigning the weight of the density matrix in last step and last-last step
+
+#### Returns:
+
+- `ground_state_energy`: The energy of the ground state.
 
 
-## Test
+
+
+## Example (Test)
 
 Build-in tests are on the `test\runtest.jl`, they are:
 ```julia
