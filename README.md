@@ -16,7 +16,7 @@ Use this command in the shell to set the number of processors used in the calcul
 ```sh
 export  JULIA_NUM_THREADS=${THE_NUMBER_OF_THE_CORES}   
 ```
-It should be set before activate the Julia REPL environment.
+It should be set before activating the Julia REPL environment.
 
 
 ## Solver API
