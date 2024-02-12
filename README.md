@@ -110,9 +110,9 @@ The results of these atom should be:
 -2.852043619183923 hatree for He atom
 -38.39474787071248 hatree for C atom
 ```
-
+ 
 
 ## On progress
 
 1. Implement the open-shell system for Hartree-fock Method
-2. Try the Hartree-fock Method in moleculars
+2. Adapt the Hartree-fock Method in moleculars using other symmetric option instead of Spherical 
