@@ -16,7 +16,7 @@ test            # running the build-in test of this project
 ### Single electron
 #### 1. `eigen_solve(grid_size, potential, cell_length, hbar, mass; sparse)`
 
-Solves the eigenvalue problem for a given Hamiltonian matrix.
+Solves the eigenvalue problem for a given Hamiltonian matrix. The space will be devided into sparse grid
 
 #### Parameters:
 
@@ -34,7 +34,7 @@ Solves the eigenvalue problem for a given Hamiltonian matrix.
 
 #### 2. `variation_solve(basis_func, num_orbitals, start_bound, end_bound; potential, symmetric, dimension)`
 
-Solves the eigenvalue problem using the variational method.
+Find the ground state energy using the variational method.
 
 #### Parameters:
 
