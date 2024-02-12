@@ -76,8 +76,6 @@ Solves the Hartree-Fock equations for a given system.
 - `ground_state_energy`: The energy of the ground state.
 
 
-
-
 ## Example (Test)
 
 Build-in tests are on the `test\runtest.jl`, they are:
