@@ -114,5 +114,5 @@ The results of these atom should be:
 
 ## On progress
 
-1. Open-shell system for Hartree-fock Method
-2. Set the positive charge distribution as a parameter instead of fixing it in the origin
+1. Implement the open-shell system for Hartree-fock Method
+2. Try the Hartree-fock Method in moleculars
