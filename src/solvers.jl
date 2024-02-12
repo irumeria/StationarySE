@@ -65,7 +65,8 @@ function hartree_fock_solve(
 		start_bound = [0.0],
 		end_bound = [4.0],
 		potential_func = (r) -> -nuclear_z / r,
-		mode = :RHF
+		mode = :RHF,
+		converge_alpha = 0.6,
 	)
 
 	if mode != :RHF
@@ -77,7 +78,7 @@ function hartree_fock_solve(
 	end
 
 	if nuclear_z % 2 != 0
-		ErrorException("RHF mode only support close-shell, nuclear_z should be an odd number")
+		ErrorException("RHF mode only supports close-shell system, nuclear_z should be an odd number")
 	end
 
 	overlap_matrix = integral_overlap(
@@ -102,11 +103,11 @@ function hartree_fock_solve(
 		symmetric = symmetric,
 		dimension = dimension,
 	)
-
-	J_matrix, K_matrix = two_electron_matrix( # TODO
+	density_matrix = generate_density_matrix(ec)
+	J_matrix, K_matrix = two_electron_matrix(
 		basis_func,
 		num_orbitals,
-		ec,
+		density_matrix,
 		start_bound,
 		end_bound;
 		operator = (dr) -> 1.0 / dr,
@@ -140,7 +141,7 @@ function hartree_fock_solve(
 	)
 
 	last_energy = 0.0
-
+	last_density_matrix = zeros(size(density_matrix))
 	for i in 1:iter_steps+1
 
 		deltaE = abs(ground_state_energy - last_energy)
@@ -162,11 +163,14 @@ function hartree_fock_solve(
 		for k ∈ 1:size(ec)[2]
 			ec[:, k] = normalize_overlap(overlap_matrix, ec[:, k])
 		end
+		_density_matrix = generate_density_matrix(ec)
+		density_matrix = converge_alpha .* _density_matrix + (1 - converge_alpha) .* last_density_matrix
+		last_density_matrix = density_matrix
 
 		J_matrix, K_matrix = two_electron_matrix(
 			basis_func,
 			num_orbitals,
-			ec,
+			density_matrix,
 			start_bound,
 			end_bound;
 			operator = (dr) -> 1.0 / dr,

@@ -82,7 +82,7 @@ end
 
 function gaussian_hydrogen(r, n)
 	"""
-	the params of alpha were fitted by 
+	the params of alpha were suggested by 
 	R.Ditchfield,W.J.Hehre,andJ.A.Pople, Self-consistentmolecularorbitalmethods.VI.Energy
 	optimised Gaussian atomic orbitals, J. Chem. Phys., 52 (1970), 5001-7.
 
@@ -95,6 +95,11 @@ function gaussian_hydrogen(r, n)
 end
 
 function gaussian_helium(r, n)
+	"""
+	the params of alpha were suggested by 
+	R.Ditchfield,W.J.Hehre,andJ.A.Pople, Self-consistentmolecularorbitalmethods.VI.Energy
+	optimised Gaussian atomic orbitals, J. Chem. Phys., 52 (1970), 5001-7.
+	"""
 	alpha = 0.29807299999998527 + 1.646466776632318*n - 0.05681922938143689*n^2 - 1.5927093900343725*n^3 + 0.9475558427835066*n^4
 	exp(-alpha * r^2) 
 end
@@ -109,6 +114,11 @@ end
 
 
 function gaussian_carbon(r, n)
+	"""
+	the params of alpha were suggested by 
+	R.Ditchfield,W.J.Hehre,andJ.A.Pople, Self-consistentmolecularorbitalmethods.VI.Energy
+	optimised Gaussian atomic orbitals, J. Chem. Phys., 52 (1970), 5001-7.
+	"""
 	x = n
 	alpha = 446.62209999992734 - 598.006694158179*x + 119.8768753734617*x^2 + 238.060660375486*x^3 - 194.99390715856327*x^4 + 66.59740985677443*x^5 - 11.854795762057295*x^6 + 1.0781859016858948*x^7 - 0.0395744285359738*x^8
 	exp(-alpha * r^2) 

@@ -35,7 +35,7 @@ end
 function two_electron_matrix(
 	wave_func::Function,
 	matrix_size::Int64,
-	coefs::Matrix,
+	density_matrix::Matrix,
 	start_bound::Vector, # x_start, y_start, z_start
 	end_bound::Vector; # x_end, y_end, z_end
 	operator::Function = (_) -> 1, # Deafult : I
@@ -45,13 +45,6 @@ function two_electron_matrix(
 	"""
 	matrix of <ψ_p|x><ψ_m|x><x|O|x><x|ψ_q><x|ψ_s>
 	"""
-	fock_levels_num = size(coefs)[2]
-	for en ∈ 1:fock_levels_num
-		if any(isa(x, Complex) for x in coefs[:,en])
-			coefs[:,en] = sqrt.(real.(coefs[:,en])^2 + imag.(coefs[:,en])^2)
-			@warn "normalize factors contains complex number, the norm is used."
-		end
-	end
 
 	if combined
 		f = wave_func
@@ -79,8 +72,6 @@ function two_electron_matrix(
 	shared_mat = SharedArray{Float64}((matrix_size, matrix_size, matrix_size, matrix_size))
 
 	permutations_array = []
-	J_mat = zeros((matrix_size, matrix_size))
-	K_mat = zeros((matrix_size, matrix_size))
 	for i ∈ 0:matrix_size-1
 		for j ∈ 0:matrix_size-1
 			for k ∈ 0:matrix_size-1
@@ -104,19 +95,18 @@ function two_electron_matrix(
 	finish!(prog)
 	_mat = copy(shared_mat)
 
+	J_mat = zeros((matrix_size, matrix_size))
+	K_mat = zeros((matrix_size, matrix_size))
+
 	for i ∈ 1:matrix_size
 		for j ∈ 1:matrix_size
-			for k ∈ 1:fock_levels_num
-				J_mat[i, j] += coefs[:, k]' * _mat[i, :, j, :] * coefs[:, k]
-			end
+			J_mat[i, j] += tr(density_matrix * _mat[i, :, j, :])
 		end
 	end
 
 	for i ∈ 1:matrix_size
 		for j ∈ 1:matrix_size
-			for k ∈ 1:fock_levels_num
-				K_mat[i, j] += coefs[:, k]' * _mat[i, :, :, j] * coefs[:, k]
-			end
+			K_mat[i, j] += tr(density_matrix * _mat[i, :, :, j])
 		end
 	end
 
@@ -124,4 +114,12 @@ function two_electron_matrix(
 
 end
 
-export two_electron_matrix_from_integraled, two_electron_matrix
+function generate_density_matrix(ec::Matrix)
+	density_matrix = zeros((size(ec)[1], size(ec)[1]))
+	for k ∈ 1:size(ec)[2]
+		density_matrix += ec[:, k] * ec[:, k]'
+	end
+	density_matrix
+end
+
+export two_electron_matrix_from_integraled, two_electron_matrix, generate_density_matrix

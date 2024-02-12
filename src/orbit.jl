@@ -1,5 +1,10 @@
 
 function normalize_overlap(overlap_matrix, expansion_coefficients)
+	if any(isa(x, Complex) for x in expansion_coefficients)
+		expansion_coefficients = real.(expansion_coefficients)
+		@warn "expansion_coefficients contains complex number, only real part is used."
+	end
+
 	expansion_coefficients /
 		(expansion_coefficients' * overlap_matrix * expansion_coefficients)^0.5
 end

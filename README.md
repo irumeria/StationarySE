@@ -11,6 +11,10 @@ instantiate     # install and precompile the dependencies for this project
 test            # running the build-in test of this project
 ```
 
+
+
+## Test
+
 Build-in tests are on the `test\runtest.jl`, they are:
 ```julia
 println("")
@@ -36,8 +40,8 @@ The results of these atom should be:
 -38.39474787071248 hatree for C atom
 ```
 
+
 ## On progress
 
 1. Open-shell system for Hartree-fock Method
-2. More universal basis functions
-3. Set the positive charge distribution as a parameter instead of fixing it in the origin
+2. Set the positive charge distribution as a parameter instead of fixing it in the origin
