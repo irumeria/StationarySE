@@ -30,11 +30,11 @@ using LinearAlgebra
 
 	println("")
 	println("=== Testing O atom ===")
-	ground_state_energy_1 = hartree_fock_solve(8, gaussian_carbon, 6, end_bound=[6.0])
-	energy_ev_1 = ground_state_energy * 27.211396
-	ground_state_energy_2 = hartree_fock_solve(8, gaussian_oxygen, 6, end_bound=[6.0])
-	energy_ev_2 = ground_state_energy * 27.211396
+	ground_state_energy_1 = hartree_fock_solve(8, gaussian_oxygen_constrain, 8, end_bound=[8.0])
+	energy_ev_1 = ground_state_energy_1 * 27.211396
+	ground_state_energy_2 = hartree_fock_solve(8, gaussian_oxygen_unconstrain, 8, end_bound=[8.0])
+	energy_ev_2 = ground_state_energy_2 * 27.211396
 	println("=== different basis functions will give different results:")
-	println("(basis 1) O atom: ", ground_state_energy_1, " hatree, or ", energy_ev, " ev")
-	println("(basis 2) O atom: ", ground_state_energy_2, " hatree, or ", energy_ev, " ev")
+	println("(basis 1) O atom: ", ground_state_energy_1, " hatree, or ", energy_ev_1, " ev")
+	println("(basis 2) O atom: ", ground_state_energy_2, " hatree, or ", energy_ev_2, " ev")
 end

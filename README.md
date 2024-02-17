@@ -102,6 +102,10 @@ ground_state_energy = hartree_fock_solve(2, gaussian_helium, 2; end_bound=[8.0])
 println("")
 println("=== Testing C atom ===")
 ground_state_energy = hartree_fock_solve(6, gaussian_carbon, 6; end_bound=[8.0])
+
+println("")
+println("=== Testing O atom ===")
+ground_state_energy_1 = hartree_fock_solve(8, gaussian_oxygen_constrain, 8, end_bound=[8.0])
 ```
 
 The results of these atom should be:
@@ -109,6 +113,7 @@ The results of these atom should be:
 -0.4992783898562091 hatree for H atom
 -2.852043619183923 hatree for He atom
 -38.39474787071248 hatree for C atom
+-72.29553139062395 hatree for O atom
 ```
  
 

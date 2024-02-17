@@ -124,22 +124,66 @@ function gaussian_carbon(r, n)
 	exp(-alpha * r^2) 
 end
 
-function gaussian_oxygen(r, n)
+function gaussian_oxygen_unconstrain(r, n)
 	x = n
 	alpha = 282.4431 - 605.9857971179763*x + 655.5668146075697*x^2 - 418.2070589896529*x^3 + 161.77781207998268*x^4 - 38.01963633881945*x^5 + 5.277294957534723*x^6 - 0.3961440535515874*x^7 + 0.012354854913194447*x^8
 	exp(-alpha * r^2)
 end
 
-function gaussian_oxygen_2(r, n)
+function gaussian_oxygen_constrain(r, n)
 	x = n
-	alpha = 282.4431 - 389.6065862360715*x + 138.11231157016877*x^2 + 47.118644341180485*x^3 - 48.12873642102427*x^4 + 14.51699053805555*x^5 - 2.1392083744097214*x^6 + 0.1567984068353174*x^7 - 0.004573824734623014*x^8
+	alpha = 816.2436 - 1484.511751554762*x + 1233.0987376660914*x^2 - 582.5450861416666*x^3 + 167.60307820440968*x^4 - 29.878573704166662*x^5 + 3.222681174930555*x^6 - 0.19268834940476187*x^7 + 0.00490270456845238*x^8
 	exp(-alpha * r^2)
 end
 
-function gaussian_oxygen_3(r, n)
-	x = n
-	alpha = 83.87572557867881 - 125.30205962611976*x + 66.80832586569271*x^2 - 12.380710077489967*x^3 - 1.6419505209268408*x^4 + 1.1188284091816623*x^5 - 0.19769507767761269*x^6 + 0.015705930349550135*x^7 - 0.00048068987847203255*x^8
-	exp(-alpha * r^2)
+function build_basis_benzene()
+	# TODO: the basis of benzene is not correct
+
+	# (1.40272, 0.0, 0.0),
+	# (0.70136, 1.21479, 0.0),
+	# (-0.70136, 1.21479, 0.0),
+	# (-1.40272, 0.0, 0.0),
+	# (-0.70136, -1.21479, 0.0),
+	# (0.70136, -1.21479, 0.0),
+	@variables rv
+	cws = (rv) -> begin # carbon basis set
+		ec_carbon = [-0.018694, 0.068236, 0.339788, 0.919272, -0.174387, 0.063763]
+		location_C_atoms = [1.40272 0.0 0.0; 
+							0.70136 1.21479 0.0; 
+							-0.70136 1.21479 0.0; 
+							-1.40272 0.0 0.0; 
+							-0.70136 -1.21479 0.0; 
+							0.70136 -1.21479 0.0]
+		carbon_alpha = [446.6221, 67.34026, 14.98591, 3.9944722, 1.967742e-2, 1.35529e-1]
+		[sum([ec_carbon[n]*exp(-carbon_alpha[n] * norm(rv-location_C_atoms[m,:])^2) for n in 1:6]) for m in 1:6]
+	end
+
+	@variables x y z
+	print(expand_derivatives(cws([x, y, z])[1]))
+	# construct the basis of benzene based on group theory
+	# take benzene as a C6 group for simplicity
+	benzene_basis_f_ = (rv)-> begin
+		benzene_basis = []
+		omega = 2 * pi * im / 6
+		push!(benzene_basis, (rv)->cws(rv)[1] + cws(rv)[2] + cws(rv)[3] + cws(rv)[4] + cws(rv)[5] + cws(rv)[6])
+		push!(benzene_basis, (rv)->cws(rv)[1] - cws(rv)[2] + cws(rv)[3] - cws(rv)[4] + cws(rv)[5] - cws(rv)[6])
+		push!(benzene_basis, (rv)->cws(rv)[1] + omega * cws(rv)[2] + omega^2 * cws(rv)[3] + omega^3 * cws(rv)[4] + 
+					omega^4 * cws(rv)[5] + omega^5 * cws(rv)[6])
+		push!(benzene_basis, (rv)->cws(rv)[1] + omega^5 * cws(rv)[2] + omega^4 * cws(rv)[3] + omega^3 * cws(rv)[4] + 
+					omega^2 * cws(rv)[5] + omega * cws(rv)[6])
+		push!(benzene_basis, (rv)->cws(rv)[1] + omega^2 * cws(rv)[2] + omega^4 * cws(rv)[3] + cws(rv)[4] + 
+					omega^2 * cws(rv)[5] + omega^4 * cws(rv)[6])
+		push!(benzene_basis, (rv)->cws(rv)[1] + omega^4 * cws(rv)[2] + omega^2 * cws(rv)[3] + cws(rv)[4] + 
+					omega^4 * cws(rv)[5] + omega^2 * cws(rv)[6])
+		[benzene_basis[i](rv) for i in 1:6]
+	end
+	
+	@variables x y z n
+	benzene_basis_f_expr = expand_derivatives(benzene_basis_f_([x, y, z])[n])
+	benzene_basis_f = mk_function(build_function(benzene_basis_f_expr, [x, y, z, n]))
+	print(benzene_basis_f_expr)
+	benzene_basis_f
+
 end
 
-export pow_series, gaussian_hydrogen, gaussian_helium, hydrogen_basis_another, harmonic_oscillator, finite_well, hydrogen_atom, gaussian_carbon, gaussian_oxygen, gaussian_oxygen_2, gaussian_oxygen_3
+export pow_series, gaussian_hydrogen, gaussian_helium, hydrogen_basis_another, harmonic_oscillator, finite_well, hydrogen_atom, gaussian_carbon, gaussian_oxygen_unconstrain, gaussian_oxygen_constrain, build_basis_benzene
