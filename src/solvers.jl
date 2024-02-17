@@ -149,7 +149,6 @@ function hartree_fock_solve(
 
 		if deltaE < torrlence
 			println("converged!")
-			println("expansion coefficients: ", evecs[:, argmin(real.(evals))])
 			break
 		elseif i == iter_steps + 1
 			println("not converged!")
