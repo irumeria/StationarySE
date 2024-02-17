@@ -86,7 +86,7 @@ Solves the Hartree-Fock equations for a given system.
 
 ## Example (Test)
 
-Build-in tests are on the `test\runtest.jl`, they are:
+Build-in tests are on the `test/runtest.jl`, they are:
 ```julia
 println("")
 println("=== Testing H atom ===")

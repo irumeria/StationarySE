@@ -67,7 +67,7 @@ function two_electron_matrix(
 		start_bound = [start_bound[1], start_bound[1], 0]
 		end_bound = [end_bound[1], end_bound[1], pi]
 	else
-		ErrorException("No implement for dimension "+string(dimension))
+		ErrorException("A system without a spherical symmetry is not implemented yet.")
 	end
 
 	shared_mat = SharedArray{Float64}((matrix_size, matrix_size, matrix_size, matrix_size))
