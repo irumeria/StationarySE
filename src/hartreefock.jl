@@ -115,6 +115,7 @@ function two_electron_matrix(
 
 end
 
+# generate density matrix from expansion coefficients
 function generate_density_matrix(ec::Matrix)
 	density_matrix = zeros((size(ec)[1], size(ec)[1]))
 	for k ∈ 1:size(ec)[2]
